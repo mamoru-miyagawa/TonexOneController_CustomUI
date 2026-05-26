@@ -10,8 +10,8 @@ This fork only targets the **Waveshare 3.5B with a Tonex One** — the only hard
 
 I also do not own a Valeton GP-5. Its behavior is unchanged from upstream and no UI updates were made for it. It **should** still work, but is not supported and will probably look broken on the redesigned screens.
 
-<img width="960" height="637" alt="image" src="https://github.com/user-attachments/assets/8a27bb60-0bc9-44fb-a794-5e32914c5b61" />
-<img width="958" height="639" alt="image" src="https://github.com/user-attachments/assets/74451abf-96d8-4adf-9dc4-d1b90cb6173a" />
+<img width="480" height="320" alt="image" src="https://github.com/user-attachments/assets/8a27bb60-0bc9-44fb-a794-5e32914c5b61" />
+<img width="480" height="320" alt="image" src="https://github.com/user-attachments/assets/74451abf-96d8-4adf-9dc4-d1b90cb6173a" />
 
 
 
