@@ -27,6 +27,7 @@ I have made this Customized UI focused on the "signal chain" and preset control.
   - Noise Gate tab: Threshold, Release, Depth
 - The Modulation tab was deliberately left with sliders — its parameters change meaning depending on the selected effect, which doesn't translate well to a fixed-range arc widget.
 - Preset label rework: the preset number now shows on its own large label, separate from the preset title.
+- Added a Next and Previous button to change presets (swiping still works)
 - Removed amplifier-skin / image assets to free up flash space as they are not used.
 
 **Build tooling:**
