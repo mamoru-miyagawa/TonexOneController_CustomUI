@@ -2,11 +2,20 @@
 
 This is a customized fork of **[Builty/TonexOneController](https://github.com/Builty/TonexOneController)**. All credit for the original project goes to the upstream author — see the original README below for project background, supported hardware, build instructions, configuration, and license terms.
 
+The UI redesign was done by me using Affinity Designer and EEZ Studio. The code wiring, custom behavior, and general fixes and tweaks were AI-assisted.
+
+## Hardware support
+
+This fork only targets the **Waveshare 3.5B with a Tonex One** — the only hardware I own, and therefore the only configuration I could develop and test on. If I ever get access to other supported boards I may adapt it; until then, other variants are inherited from upstream but have not been retested here.
+
+I also do not own a Valeton GP-5. Its behavior is unchanged from upstream and no UI updates were made for it. It **should** still work, but is not supported and will probably look broken on the redesigned screens.
+
 ## What's different in this fork
 
-**Primary target:** Waveshare 3.5" touchscreen build (`build_ws35b`). Other hardware variants are inherited from upstream but have not been retested here.
+### Why a Custom UI? ###
+I have made this Customized UI focused on the "signal chain" and preset control. The usability and behavior should be the same as the original build.
 
-**UI changes (480×320 / Waveshare 3.5" only):**
+**UI changes (480×320 / Waveshare 3.5B only):**
 - Many slider widgets replaced with circular arc widgets for a more compact layout, including:
   - BPM (Global)
   - Global tab: Input Trim, Tuning Reference, Master Volume
@@ -16,15 +25,17 @@ This is a customized fork of **[Builty/TonexOneController](https://github.com/Bu
   - Amplifier tab: Gain, Volume, Presence, Depth
   - Compressor tab: Threshold, Attack, Gain
   - Noise Gate tab: Threshold, Release, Depth
-- Bank / Preset label layout reworked (preset number now shown on its own large label, separate from the preset name).
-- Removed unused amplifier-skin / image assets to free up flash space.
+- The Modulation tab was deliberately left with sliders — its parameters change meaning depending on the selected effect, which doesn't translate well to a fixed-range arc widget.
+- Preset label rework: the preset number now shows on its own large label, separate from the preset title.
+- Removed amplifier-skin / image assets to free up flash space as they are not used.
 
 **Build tooling:**
+- Since I have removed some elements from the original design without changing the core code of how it works, I have to add the missing widget declarations using a script.
 - [`tools/restore_compat_stubs.ps1`](tools/restore_compat_stubs.ps1) — re-inserts a hand-maintained "COMPAT STUBS" block of widget declarations into the EEZ-regenerated `screens.h`. EEZ Studio rewrites that file on every regen and wipes the declarations that runtime code (`display.c`, `display_tonex.c`) depends on. Run this script after every EEZ regen, before `idf.py build`.
 
 **Other small fixes:**
 - Preprocessor guards in [`footswitches.c`](source/main/footswitches.c) around negative `FOOTSWITCH_*` constants — avoids "shift count is negative" warnings under the stricter ESP-IDF 5.5 toolchain on platforms with fewer than 4 physical switches.
-- Watchdog subscription in the display task to force a core-dump on UI freezes (helpful when debugging).
+- Watchdog subscription in the display task to force a core-dump on UI freezes (helpful when debugging, but might be removed in the future).
 
 ## Fonts / Acknowledgements
 
