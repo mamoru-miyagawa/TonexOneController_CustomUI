@@ -1,0 +1,16 @@
+{
+  "name": "Tonex One Controller - Custom UI (Waveshare 3.5B)",
+  "version": "1.0.0",
+  "new_install_prompt_erase": false,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        { "path": "firmware/bootloader.bin",       "offset": 0 },
+        { "path": "firmware/partition-table.bin",  "offset": 32768 },
+        { "path": "firmware/ota_data_initial.bin", "offset": 53248 },
+        { "path": "firmware/TonexController.bin",  "offset": 65536 }
+      ]
+    }
+  ]
+}

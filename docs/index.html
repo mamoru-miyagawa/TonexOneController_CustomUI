@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tonex One Controller - Custom UI Flasher</title>
+  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
+  <style>
+    :root {
+      color-scheme: light dark;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 2rem 1.25rem;
+      line-height: 1.55;
+    }
+    h1 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.15rem; margin-top: 2rem; }
+    .subtitle { color: #888; margin-top: 0; }
+    .target {
+      display: inline-block;
+      background: rgba(0, 200, 165, 0.15);
+      border: 1px solid rgba(0, 200, 165, 0.5);
+      color: inherit;
+      padding: 0.15rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+    ol { padding-left: 1.4rem; }
+    ol li { margin: 0.4rem 0; }
+    code {
+      background: rgba(127, 127, 127, 0.15);
+      padding: 0.1rem 0.35rem;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+    .flash-area {
+      margin: 1.5rem 0;
+      padding: 1.25rem;
+      border: 1px solid rgba(127, 127, 127, 0.3);
+      border-radius: 8px;
+      text-align: center;
+    }
+    .warn {
+      font-size: 0.85rem;
+      color: #888;
+    }
+    a { color: #00c9a5; }
+  </style>
+</head>
+<body>
+  <h1>Tonex One Controller — Custom UI Flasher</h1>
+  <p class="subtitle">Web-based installer for the customized UI fork.</p>
+  <div class="target">Target hardware: Waveshare 3.5B (ESP32-S3) + Tonex One</div>
+
+  <h2>How to flash</h2>
+  <ol>
+    <li>Use <strong>Google Chrome</strong> or <strong>Microsoft Edge</strong> on a desktop computer. (Firefox and Safari don't support the Web Serial API.)</li>
+    <li>Press and <strong>hold the BOOT button</strong> on the Waveshare board.</li>
+    <li>Connect a USB-C cable from the board to your computer.</li>
+    <li>Release the BOOT button.</li>
+    <li>Click the <strong>Connect</strong> button below and select the new serial port that appears (often labeled "USB JTAG/serial debug unit" or similar).</li>
+    <li>Follow the on-screen prompts. When finished, unplug the cable and power the board normally to test it.</li>
+  </ol>
+
+  <div class="flash-area">
+    <esp-web-install-button manifest="manifest.json"></esp-web-install-button>
+    <p class="warn">If the button stays disabled, your browser doesn't support Web Serial — switch to Chrome or Edge.</p>
+  </div>
+
+  <h2>What's installed?</h2>
+  <p>This is the <a href="https://github.com/YOUR_USERNAME/YOUR_REPO">customized UI fork</a> of <a href="https://github.com/Builty/TonexOneController">Builty/TonexOneController</a>. The UI was rebuilt for a more compact arc-based layout on the 480×320 screen. See the repo README for a list of changes.</p>
+
+  <h2>Troubleshooting</h2>
+  <ul>
+    <li><strong>"No matching device"</strong> — make sure you held BOOT while plugging in. Unplug, hold BOOT, plug back in, release BOOT, retry.</li>
+    <li><strong>Flash succeeds but screen stays blank</strong> — unplug USB and connect a normal power source. The screen only initializes on a fresh power-up after flashing.</li>
+    <li><strong>Pedal not responding after flash</strong> — try again with the "Erase device" option enabled. Note this wipes saved settings on the controller.</li>
+  </ul>
+</body>
+</html>
