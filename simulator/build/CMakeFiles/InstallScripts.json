@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/cmake_install.cmake",
+		"C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

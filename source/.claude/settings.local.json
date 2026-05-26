@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\build_ws35b\\\\CMakeFiles\" -ErrorAction SilentlyContinue | Where-Object { $_.Name -match \"Error|Output\" } | Format-Table Name, Length, LastWriteTime -AutoSize)",
+      "Bash(grep -hoE \"objects\\\\.[a-zA-Z_][a-zA-Z0-9_]+\" c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/display.c c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/display_tonex.c | sort -u > /tmp/refs.txt; grep -oE \"lv_obj_t \\\\*[a-zA-Z_][a-zA-Z0-9_]+\" c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/ui_generated_480x320land/screens.h | sed 's/lv_obj_t \\\\*/objects./' | sort -u > /tmp/defs.txt; echo \"=== Referenced but NOT defined in screens.h ===\"; comm -23 /tmp/refs.txt /tmp/defs.txt)",
+      "Bash(grep -nB2 \"ui_bank_value_label\\\\|ui_preset_heading_label2\\\\|ui_cstatus\\\\|ui_dstatus\\\\|ui_mstatus\\\\|ui_rstatus\\\\|objects\\\\.ui_bpm[^_]\" c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/display.c c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/display_tonex.c)",
+      "Bash(grep -nE \"ui_bank_value_label\\(\\\\W|$\\)\" c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/display.c c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/display_tonex.c)",
+      "Bash(awk '{printf \"%10s  %s\\\\n\", $5, $NF}')",
+      "Bash(awk '/create_screen_settings\\\\\\(\\\\\\)/,/^void create_screen_val_settings/' c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/ui_generated_480x320land/screens.c)",
+      "Bash(awk '/^#if|^#endif|^#else|^#elif|display_on_vsync_event/' c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/display.c)",
+      "Bash(echo \"=== screens_compat.c still intact? ===\"; grep -nE \"ui_chip|ui_bank_value_label\" c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/ui_generated_480x320land/screens_compat.c; echo; echo \"=== Any remaining missing fields display.c needs ===\"; grep -hoE \"objects\\\\.[a-zA-Z_][a-zA-Z0-9_]+\" c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/display.c c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/display_tonex.c | sort -u > /tmp/refs.txt; grep -oE \"lv_obj_t \\\\*[a-zA-Z_][a-zA-Z0-9_]+\" c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/main/ui_generated_480x320land/screens.h | sed 's/lv_obj_t \\\\*/objects./' | sort -u > /tmp/defs.txt; comm -23 /tmp/refs.txt /tmp/defs.txt)",
+      "Bash(Get-ChildItem -Recurse c:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/source/skin_images -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object FullName, Length)",
+      "Bash(ls \"c:\\\\Users\\\\user\\\\.claude\\\\projects\\\\c--Users-user-Downloads-TonexOneController-main-TonexOneController-main-source\\\\memory\\\\\" 2>&1 | head -50)",
+      "Read(//c/Users/user/.claude/projects/c--Users-user-Downloads-TonexOneController-main-TonexOneController-main-source/**)",
+      "Bash(grep -o '\"text\":\"[^\"]\\\\{20,300\\\\}\"' \"/c/Users/user/.claude/projects/c--Users-user-Downloads-TonexOneController-main-TonexOneController-main-source/7ecdfe16-5565-44c5-9c45-01d4cba32c26.jsonl\")",
+      "Bash(grep -o '\"text\":\"[^\"]\\\\{20,400\\\\}\"' \"/c/Users/user/.claude/projects/c--Users-user-Downloads-TonexOneController-main-TonexOneController-main-source/7ecdfe16-5565-44c5-9c45-01d4cba32c26.jsonl\")",
+      "PowerShell(powershell -File \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\tools\\\\restore_compat_stubs.ps1\")"
+    ],
+    "additionalDirectories": [
+      "\\tmp"
+    ]
+  }
+}

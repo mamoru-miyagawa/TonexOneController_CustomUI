@@ -30,6 +30,7 @@ limitations under the License.
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_log.h"
+#include "esp_task_wdt.h"
 #include "nvs_flash.h"
 #include "driver/uart.h"
 #include "driver/gpio.h"
@@ -60,6 +61,11 @@ limitations under the License.
     #include "ui.h"
     #include "images.h"
     #include "actions.h"
+    #if (CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B || \
+         CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC3248W535 || \
+         CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_MAX_V2)
+        #include "screens_compat.h"
+    #endif
 #endif
 #include "usb/usb_host.h"
 #include "usb/cdc_acm_host.h"
@@ -81,7 +87,7 @@ limitations under the License.
 
 static const char *TAG = "app_display";
 
-#define DISPLAY_TASK_STACK_SIZE   (6 * 1024)
+#define DISPLAY_TASK_STACK_SIZE   (16 * 1024)
 
 #if CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
     //static lv_anim_t *ui_BPMAnimation = NULL;
@@ -532,6 +538,10 @@ void action_enable_skin_edit(lv_event_t * e)
     lv_obj_add_flag(objects.ui_bpm_title_label, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(objects.ui_bpm_value_label, LV_OBJ_FLAG_HIDDEN);
     lv_obj_add_flag(objects.ui_bpm_indicator, LV_OBJ_FLAG_HIDDEN);
+
+    /* Hide the chain band so the ◁ / ▷ / ✓ overlay can claim the space.
+       (ui_handwritten_480x320land puts the arrows over y=128, inside the band.) */
+    lv_obj_add_flag(objects.ui_bottom_panel_tonex, LV_OBJ_FLAG_HIDDEN);
 }
 
 /****************************************************************************
@@ -558,12 +568,15 @@ void action_save_skin_edit(lv_event_t * e)
     lv_obj_clear_flag(objects.ui_bpm_title_label, LV_OBJ_FLAG_HIDDEN);
     lv_obj_clear_flag(objects.ui_bpm_value_label, LV_OBJ_FLAG_HIDDEN);
 
+    /* Restore the chain band that action_enable_skin_edit hid. */
+    lv_obj_clear_flag(objects.ui_bottom_panel_tonex, LV_OBJ_FLAG_HIDDEN);
+
 #if (CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR)
     if (control_get_config_item_int(CONFIG_ITEM_DISABLE_BPM_FLASHER) == 0)
     {
         lv_obj_clear_flag(objects.ui_bpm_indicator, LV_OBJ_FLAG_HIDDEN);
     }
-#endif    
+#endif
 }
 
 /****************************************************************************
@@ -1106,12 +1119,10 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
                     case AMP_MODELLER_TONEX:            // fallthrough
                     default:
                     {
-#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI                                    
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
                         lv_obj_clear_flag(objects.ui_bottom_panel_tonex, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_add_flag(objects.ui_bottom_panel_valeton, LV_OBJ_FLAG_HIDDEN);
-
-                        lv_label_set_text(objects.ui_project_heading_label, "Tonex Controller"); 
-#else                    
+#else
                         // set effect letter to "C" (Compressor)
                         lv_label_set_text(objects.ui_cstatus, "C");
 #endif    
@@ -1120,12 +1131,10 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
 
                     case AMP_MODELLER_VALETON_GP5:
                     {
-#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI                                                            
+#if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
                         lv_obj_add_flag(objects.ui_bottom_panel_tonex, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_clear_flag(objects.ui_bottom_panel_valeton, LV_OBJ_FLAG_HIDDEN);
-
-                        lv_label_set_text(objects.ui_project_heading_label, "Valeton Controller"); 
-#else            
+#else
                         // set effect letter to "T" (Distortion)
                         lv_label_set_text(objects.ui_cstatus, "T");
 #endif    
@@ -1304,7 +1313,42 @@ static  __attribute__((unused)) uint8_t update_ui_element(tUIUpdate* update)
         case UI_ACTION_SET_LABEL_TEXT:
         {
 #if CONFIG_TONEX_CONTROLLER_DISPLAY_FULL_UI
-            lv_label_set_text(element_1, update->Text);
+            /* Preset-name updates arrive as "NN: Name". Split: number ->
+               ui_preset_value_label, name -> ui_preset_heading_label.
+               All other labels get the raw text. */
+            if (element_1 == objects.ui_preset_heading_label)
+            {
+                const char* colon = strchr(update->Text, ':');
+                if (colon != NULL)
+                {
+                    char preset_index[16];
+                    size_t n = (size_t)(colon - update->Text);
+                    if (n >= sizeof(preset_index))
+                    {
+                        n = sizeof(preset_index) - 1;
+                    }
+                    memcpy(preset_index, update->Text, n);
+                    preset_index[n] = '\0';
+                    lv_label_set_text(objects.ui_preset_value_label, preset_index);
+
+                    /* skip ":" then one optional space */
+                    const char* name = colon + 1;
+                    if (*name == ' ')
+                    {
+                        name++;
+                    }
+                    lv_label_set_text(objects.ui_preset_heading_label, name);
+                }
+                else
+                {
+                    /* no ":" — fall back to raw text in the heading */
+                    lv_label_set_text(objects.ui_preset_heading_label, update->Text);
+                }
+            }
+            else
+            {
+                lv_label_set_text(element_1, update->Text);
+            }
 #elif CONFIG_TONEX_CONTROLLER_DISPLAY_SMALL
             if (element_1 == objects.ui_preset_heading_label)
             {
@@ -1551,11 +1595,16 @@ void display_task(void *arg)
     tUIUpdate ui_update;
 
     ESP_LOGI(TAG, "Display task start");
- 
-    while (1) 
+
+    /* Subscribe to the task watchdog so any freeze >timeout panics + saves
+       a coredump instead of silently hanging. Reset at top of each loop. */
+    esp_task_wdt_add(NULL);
+
+    while (1)
     {
+        esp_task_wdt_reset();
         // Lock the mutex due to the LVGL APIs are not thread-safe
-        if (display_lvgl_lock(pdMS_TO_TICKS(1000))) 
+        if (display_lvgl_lock(pdMS_TO_TICKS(1000)))
         {
             lv_task_handler();
             ui_tick();
@@ -1644,6 +1693,14 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
     ESP_LOGI(TAG, "Init UI");
     ui_init();
 
+#if (CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_WAVESHARE_35B || \
+     CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_JC3248W535 || \
+     CONFIG_TONEX_CONTROLLER_HARDWARE_PLATFORM_PIRATE_MIDI_POLAR_MAX_V2)
+    // Allocate hidden placeholder widgets for legacy fields that the new
+    // EEZ 480x320 design doesn't supply. See screens_compat.{h,c}.
+    screens_compat_init();
+#endif
+
     // init mem
     memset((void*)&msgbox_data, 0, sizeof(msgbox_data));
 
@@ -1667,7 +1724,7 @@ void display_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMutex
     {
         lv_obj_add_flag(objects.ui_bpm_indicator, LV_OBJ_FLAG_HIDDEN);
     }
-#endif  //CONFIG_TONEX_CONTROLLER_SHOW_BPM_INDICATOR
+#endif
 
     // create display task
     xTaskCreatePinnedToCore(display_task, "Dsp", DISPLAY_TASK_STACK_SIZE, NULL, DISPLAY_TASK_PRIORITY, NULL, 1);

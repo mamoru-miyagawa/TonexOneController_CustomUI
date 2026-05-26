@@ -1,3 +1,53 @@
+# Fork notes
+
+This is a customized fork of **[Builty/TonexOneController](https://github.com/Builty/TonexOneController)**. All credit for the original project goes to the upstream author — see the original README below for project background, supported hardware, build instructions, configuration, and license terms.
+
+## What's different in this fork
+
+**Primary target:** Waveshare 3.5" touchscreen build (`build_ws35b`). Other hardware variants are inherited from upstream but have not been retested here.
+
+**UI changes (480×320 / Waveshare 3.5" only):**
+- Many slider widgets replaced with circular arc widgets for a more compact layout, including:
+  - BPM (Global)
+  - Global tab: Input Trim, Tuning Reference, Master Volume
+  - Reverb tab: Mix, Time, Pre-delay, Color
+  - Delay tab: TS, Feedback, Mix
+  - EQ tab: Bass, Mid, Mid-Q, Treble
+  - Amplifier tab: Gain, Volume, Presence, Depth
+  - Compressor tab: Threshold, Attack, Gain
+  - Noise Gate tab: Threshold, Release, Depth
+- Bank / Preset label layout reworked (preset number now shown on its own large label, separate from the preset name).
+- Removed unused amplifier-skin / image assets to free up flash space.
+
+**Build tooling:**
+- [`tools/restore_compat_stubs.ps1`](tools/restore_compat_stubs.ps1) — re-inserts a hand-maintained "COMPAT STUBS" block of widget declarations into the EEZ-regenerated `screens.h`. EEZ Studio rewrites that file on every regen and wipes the declarations that runtime code (`display.c`, `display_tonex.c`) depends on. Run this script after every EEZ regen, before `idf.py build`.
+
+**Other small fixes:**
+- Preprocessor guards in [`footswitches.c`](source/main/footswitches.c) around negative `FOOTSWITCH_*` constants — avoids "shift count is negative" warnings under the stricter ESP-IDF 5.5 toolchain on platforms with fewer than 4 physical switches.
+- Watchdog subscription in the display task to force a core-dump on UI freezes (helpful when debugging).
+
+## Fonts / Acknowledgements
+
+This fork's UI uses two open-source typefaces, both licensed under the [SIL Open Font License 1.1](https://openfontlicense.org):
+
+- **[Anton](https://github.com/googlefonts/AntonFont)** — used for the large preset-number display. Copyright 2020 The Anton Project Authors. License: [licenses/Anton/OFL.txt](licenses/Anton/OFL.txt).
+- **[M PLUS U](https://github.com/coz-m/MPLUS_FONTS)** (Bold) — used for labels, values, and the settings UI. Copyright 2021 The M+ FONTS Project Authors. License: [licenses/MPlusU/OFL.txt](licenses/MPlusU/OFL.txt).
+
+The fonts are bundled into firmware as pre-rendered LVGL glyph tables (the `ui_font_*.c` files under `source/main/ui_generated_480x320land/`). The OFL only requires that the copyright notice and license travel with the font — both are kept in [licenses/](licenses/).
+
+## How to build (this fork)
+
+Identical to upstream — see `FirmwareDevelopment.md` and `HardwarePlatform_Waveshare3.5B.md`. Typical workflow after pulling fresh:
+
+```powershell
+cd source
+.\tools\restore_compat_stubs.ps1     # only needed if you regenerate the UI from EEZ Studio
+idf.py -B build_ws35b build
+idf.py -B build_ws35b -p COM<N> flash
+```
+
+---
+
 # Tonex Controller: An open-source controller and display interface for the IK Multimedia Tonex One, Tonex Pedal, and Valeton GP5
 This project uses a low-cost embedded controller (Espressif ESP32-S3) to form a bridge to the IK Multimedia Tonex One (which does not have native Midi capability) or the bigger Tonex pedal (new in V2.0.0.2.)
 New in V2.0.2.2. is support for the Valeton GP5.

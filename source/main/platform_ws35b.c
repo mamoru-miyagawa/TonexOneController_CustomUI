@@ -254,17 +254,21 @@ __attribute__((unused)) void platform_get_icon_coords(int16_t* dest, uint8_t max
         case AMP_MODELLER_TONEX:        // fallthrough    
         default:
         {
-            // Tonex
+            // Tonex — slots for the 8 effect icons along the chain band in the
+            // EEZ-generated 480x320 layout (ui_generated_480x320land/screens.c).
+            // Icons are 56px-spaced lv_img widgets parented to ui_bottom_panel_tonex;
+            // tonex_update_icon_order() reorders them into these x positions based
+            // on each effect's pre/post state.
             if (max_entries <= 8)
             {
-                dest[0] = -12;
-                dest[1] = 44;
-                dest[2] = 96;
-                dest[3] = 148;
-                dest[4] = 200;
-                dest[5] = 252;
-                dest[6] = 304;
-                dest[7] = 356;
+                dest[0] = -6;
+                dest[1] = 51;
+                dest[2] = 108;
+                dest[3] = 165;
+                dest[4] = 222;
+                dest[5] = 279;
+                dest[6] = 336;
+                dest[7] = 393;
             }
         } break;
 

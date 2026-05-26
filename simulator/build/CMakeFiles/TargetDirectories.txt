@@ -1,0 +1,16 @@
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/CMakeFiles/tonex_sim.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/CMakeFiles/edit_cache.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/CMakeFiles/rebuild_cache.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/CMakeFiles/list_install_components.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/CMakeFiles/install.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/CMakeFiles/install/local.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/CMakeFiles/install/strip.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-build/CMakeFiles/lvgl.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-build/CMakeFiles/lvgl_examples.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-build/CMakeFiles/lvgl_demos.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-build/CMakeFiles/edit_cache.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-build/CMakeFiles/rebuild_cache.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-build/CMakeFiles/list_install_components.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-build/CMakeFiles/install.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-build/CMakeFiles/install/local.dir
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-build/CMakeFiles/install/strip.dir

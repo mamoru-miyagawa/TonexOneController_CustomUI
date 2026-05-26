@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\")",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\ui_design_480x320land\")",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\")",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\")",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\ui_design_480x320land\\\\src\")",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\ui_design_480x320land\\\\src\\\\ui\")",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\export\")",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\export\\\\source\")",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\export\\\\screens\")",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\ui_generated_480x320land\")",
+      "Bash(cmd /c \"type \\\\\"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\ui_generated_480x320land\\\\screens.c\\\\\" | find /c /v \\\\\"\\\\\"\")",
+      "PowerShell(\\(Get-Content \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\ui_generated_480x320land\\\\screens.c\" | Measure-Object -Line\\).Lines; \\(Get-Content \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\ui_generated_480x320land\\\\ui.c\" | Measure-Object -Line\\).Lines; \\(Get-Content \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\ui_generated_480x320land\\\\styles.c\" | Measure-Object -Line\\).Lines)",
+      "PowerShell(\\(Get-Content \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\display.c\" | Measure-Object -Line\\).Lines; \\(Get-Content \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\display_tonex.c\" | Measure-Object -Line\\).Lines)",
+      "PowerShell(\\(Get-Content \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\ui_generated_480x320land\\\\screens.c\" | Measure-Object -Line\\).Lines)",
+      "PowerShell($src = \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\ui_generated_480x320land\"; $dst = \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\ui_handwritten_480x320land\"; Copy-Item -Path $src -Destination $dst -Recurse -Force; \\(Get-ChildItem $dst | Measure-Object\\).Count)",
+      "Bash(powershell -NoProfile -Command \"\\(Get-Content 'c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\ui_generated_480x320land\\\\screens.c' | Measure-Object -Line\\).Lines\")",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\components\" 2>nul)",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\components\\\\lvgl__lvgl\" 2>nul)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\" -Recurse -File | Sort-Object LastWriteTime -Descending | Select-Object -First 50 | ForEach-Object { \"$\\($_.LastWriteTime\\) - $\\($_.FullName.Substring\\($_.FullName.IndexOf\\('main\\\\'\\)+5\\)\\)\" })",
+      "Bash(findstr /v \"\\\\.eez\")",
+      "PowerShell(Get-ChildItem \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\source\\\\main\\\\ui_generated_480x320land\" | Where-Object { -not $_.PSIsContainer } | Select-Object Name | Format-Wide -Column 3)",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\simulator\")",
+      "PowerShell($msys = Test-Path 'C:\\\\msys64\\\\mingw64\\\\bin\\\\gcc.exe'; $sdl = Test-Path 'C:\\\\msys64\\\\mingw64\\\\bin\\\\SDL2.dll'; $cmake = Test-Path 'C:\\\\msys64\\\\mingw64\\\\bin\\\\cmake.exe'; $ninja = Test-Path 'C:\\\\msys64\\\\mingw64\\\\bin\\\\ninja.exe'; \"msys64: $msys\"; \"gcc: $msys\"; \"SDL2.dll: $sdl\"; \"cmake: $cmake\"; \"ninja: $ninja\")",
+      "PowerShell($pkgconf = Test-Path 'C:\\\\msys64\\\\mingw64\\\\bin\\\\pkgconf.exe'; $pkgconfig = Test-Path 'C:\\\\msys64\\\\mingw64\\\\bin\\\\pkg-config.exe'; $sdl2pc = Test-Path 'C:\\\\msys64\\\\mingw64\\\\lib\\\\pkgconfig\\\\sdl2.pc'; \"pkgconf.exe: $pkgconf\"; \"pkg-config.exe: $pkgconfig\"; \"sdl2.pc: $sdl2pc\")",
+      "PowerShell($env:PATH = 'C:\\\\msys64\\\\mingw64\\\\bin;' + $env:PATH; Set-Location 'c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\simulator'; cmake -S . -B build -G Ninja 2>&1 | Tee-Object -FilePath build_configure.log)",
+      "PowerShell($env:PATH = 'C:\\\\msys64\\\\mingw64\\\\bin;' + $env:PATH; Set-Location 'c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\simulator'; cmake --build build 2>&1 | Tee-Object -FilePath build.log | Select-Object -Last 50)",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\ui_design_480x320land\\\\assets\")",
+      "PowerShell($env:PATH = 'C:\\\\msys64\\\\mingw64\\\\bin;' + $env:PATH; Set-Location 'c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\simulator'; cmake -S . -B build -G Ninja 2>&1 | Select-Object -Last 6; cmake --build build 2>&1 | Tee-Object -FilePath build.log | Select-Object -Last 20)",
+      "PowerShell($env:PATH = 'C:\\\\msys64\\\\mingw64\\\\bin;' + $env:PATH; Set-Location 'c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\simulator'; .\\\\build\\\\tonex_sim.exe 2>&1 | Tee-Object -FilePath sim_run.log)",
+      "PowerShell(\"---\")",
+      "PowerShell($env:PATH = 'C:\\\\msys64\\\\mingw64\\\\bin;' + $env:PATH; Set-Location 'c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\simulator'; $p = Start-Process -FilePath '.\\\\build\\\\tonex_sim.exe' -PassThru -RedirectStandardOutput sim_stdout.log -RedirectStandardError sim_stderr.log; Start-Sleep -Seconds 2; if \\($p.HasExited\\) { \"EXITED with code: $\\($p.ExitCode\\)\" } else { \"STILL RUNNING \\(PID $\\($p.Id\\)\\) — window should be visible\" })",
+      "PowerShell(\"---STDOUT---\")",
+      "PowerShell(Get-Process -Name 'tonex_sim' -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process -Id 49624 -ErrorAction SilentlyContinue | Select-Object Id, MainWindowTitle, ProcessName, Responding | Format-List; if \\(-not \\(Get-Process -Id 49624 -ErrorAction SilentlyContinue\\)\\) { \"Process 49624 is gone — sim exited\" })",
+      "PowerShell($env:PATH = 'C:\\\\msys64\\\\mingw64\\\\bin;' + $env:PATH; Set-Location 'c:\\\\Users\\\\user\\\\Downloads\\\\TonexOneController-main\\\\TonexOneController-main\\\\simulator'; $p = Start-Process -FilePath '.\\\\build\\\\tonex_sim.exe' -PassThru; for \\($i=1; $i -le 6; $i++\\) { Start-Sleep -Seconds 1; if \\($p.HasExited\\) { \"t=$i s: EXITED, code=$\\($p.ExitCode\\)\"; break } else { $p.Refresh\\(\\); $title = \\(Get-Process -Id $p.Id -ErrorAction SilentlyContinue\\).MainWindowTitle; \"t=$i s: PID $\\($p.Id\\) running, window='$title'\" } })"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\user\\Downloads\\TonexOneController-main\\TonexOneController-main",
+      "C:\\Users\\user\\Downloads\\TonexOneController-main\\TonexOneController-main"
+    ]
+  }
+}

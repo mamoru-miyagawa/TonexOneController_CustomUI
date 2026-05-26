@@ -43,57 +43,7 @@ extern const lv_img_dsc_t img_next;
 extern const lv_img_dsc_t img_next_down;
 extern const lv_img_dsc_t img_previous;
 extern const lv_img_dsc_t img_previous_down;
-extern const lv_img_dsc_t img_pskin_bigmuff;
-extern const lv_img_dsc_t img_pskin_bossblack;
-extern const lv_img_dsc_t img_pskin_bosssilver;
-extern const lv_img_dsc_t img_pskin_bossyellow;
-extern const lv_img_dsc_t img_pskin_fuzzred;
-extern const lv_img_dsc_t img_pskin_fuzzsilver;
-extern const lv_img_dsc_t img_pskin_ibanezblue;
-extern const lv_img_dsc_t img_pskin_ibanezdarkblue;
-extern const lv_img_dsc_t img_pskin_ibanezgreen;
-extern const lv_img_dsc_t img_pskin_ibanezred;
-extern const lv_img_dsc_t img_pskin_klongold;
-extern const lv_img_dsc_t img_pskin_lifepedal;
-extern const lv_img_dsc_t img_pskin_morningglory;
-extern const lv_img_dsc_t img_pskin_mxrdoubleblack;
-extern const lv_img_dsc_t img_pskin_mxrdoublered;
-extern const lv_img_dsc_t img_pskin_mxrsingleblack;
-extern const lv_img_dsc_t img_pskin_mxrsinglegold;
-extern const lv_img_dsc_t img_pskin_mxrsinglegreen;
-extern const lv_img_dsc_t img_pskin_mxrsingleorange;
-extern const lv_img_dsc_t img_pskin_mxrsinglewhite;
-extern const lv_img_dsc_t img_pskin_mxrsingleyellow;
-extern const lv_img_dsc_t img_pskin_ratyellow;
 extern const lv_img_dsc_t img_settings;
-extern const lv_img_dsc_t img_skin_5150;
-extern const lv_img_dsc_t img_skin_ac30;
-extern const lv_img_dsc_t img_skin_ampegchrome;
-extern const lv_img_dsc_t img_skin_ba500;
-extern const lv_img_dsc_t img_skin_diezel;
-extern const lv_img_dsc_t img_skin_elegantblue;
-extern const lv_img_dsc_t img_skin_evh;
-extern const lv_img_dsc_t img_skin_fenderhotrod;
-extern const lv_img_dsc_t img_skin_fendertweedbig;
-extern const lv_img_dsc_t img_skin_fendertwin;
-extern const lv_img_dsc_t img_skin_friedmann;
-extern const lv_img_dsc_t img_skin_jbdumble1;
-extern const lv_img_dsc_t img_skin_jcm;
-extern const lv_img_dsc_t img_skin_jetcity;
-extern const lv_img_dsc_t img_skin_jtm;
-extern const lv_img_dsc_t img_skin_mesaboogiedual;
-extern const lv_img_dsc_t img_skin_mesamarkv;
-extern const lv_img_dsc_t img_skin_mesamarkwood;
-extern const lv_img_dsc_t img_skin_modernblackplexi;
-extern const lv_img_dsc_t img_skin_modernwhiteplexi;
-extern const lv_img_dsc_t img_skin_orangeor120;
-extern const lv_img_dsc_t img_skin_rolandjazz;
-extern const lv_img_dsc_t img_skin_silverface;
-extern const lv_img_dsc_t img_skin_supro;
-extern const lv_img_dsc_t img_skin_tonexampblack;
-extern const lv_img_dsc_t img_skin_tonexampred;
-extern const lv_img_dsc_t img_skin_whitemodern;
-extern const lv_img_dsc_t img_skin_woodamp;
 extern const lv_img_dsc_t img_smythbuilt;
 extern const lv_img_dsc_t img_usb_fail;
 extern const lv_img_dsc_t img_usb_ok;
@@ -122,6 +72,8 @@ extern const lv_img_dsc_t img_tc_on;
 extern const lv_img_dsc_t img_amp_disabled;
 extern const lv_img_dsc_t img_cab_disabled;
 extern const lv_img_dsc_t img_tick;
+extern const lv_img_dsc_t img_ui_prev;
+extern const lv_img_dsc_t img_ui_next;
 
 #ifndef EXT_IMG_DESC_T
 #define EXT_IMG_DESC_T
@@ -131,8 +83,7 @@ typedef struct _ext_img_desc_t {
 } ext_img_desc_t;
 #endif
 
-extern const ext_img_desc_t images[115];
-
+extern const ext_img_desc_t images[67];
 
 #ifdef __cplusplus
 }

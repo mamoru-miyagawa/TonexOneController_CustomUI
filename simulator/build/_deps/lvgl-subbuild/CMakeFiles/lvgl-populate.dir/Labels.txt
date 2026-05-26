@@ -1,0 +1,14 @@
+# Target labels
+ lvgl-populate
+# Source files and their labels
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-subbuild/CMakeFiles/lvgl-populate
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-subbuild/CMakeFiles/lvgl-populate.rule
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-subbuild/CMakeFiles/lvgl-populate-complete.rule
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-build.rule
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-configure.rule
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-download.rule
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-install.rule
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-mkdir.rule
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-patch.rule
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-test.rule
+C:/Users/user/Downloads/TonexOneController-main/TonexOneController-main/simulator/build/_deps/lvgl-subbuild/lvgl-populate-prefix/src/lvgl-populate-stamp/lvgl-populate-update.rule

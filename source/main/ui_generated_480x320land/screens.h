@@ -1,4 +1,4 @@
-#ifndef EEZ_LVGL_UI_SCREENS_H
+﻿#ifndef EEZ_LVGL_UI_SCREENS_H
 #define EEZ_LVGL_UI_SCREENS_H
 
 #include <lvgl.h>
@@ -7,31 +7,49 @@
 extern "C" {
 #endif
 
+// Screens
+
+enum ScreensEnum {
+    _SCREEN_ID_FIRST = 1,
+    SCREEN_ID_SCREEN1 = 1,
+    SCREEN_ID_SETTINGS = 2,
+    SCREEN_ID_VAL_SETTINGS = 3,
+    _SCREEN_ID_LAST = 3
+};
+
 typedef struct _objects_t {
     lv_obj_t *screen1;
     lv_obj_t *settings;
     lv_obj_t *val_settings;
     lv_obj_t *ui_touch_gesture_container;
+    lv_obj_t *ui_btn_prev;
+    lv_obj_t *ui_btn_next;
+    lv_obj_t *obj0;
+    lv_obj_t *bank_container;
+    lv_obj_t *ui_bank_title_label;
+    lv_obj_t *ui_bank_value_label;
+    lv_obj_t *preset_container;
+    lv_obj_t *ui_preset_value_label;
     lv_obj_t *ui_top_panel;
-    lv_obj_t *ui_usb_status_fail;
+    lv_obj_t *ui_settings_image;
     lv_obj_t *ui_project_heading_label;
     lv_obj_t *ui_wi_fi_status_disconn;
     lv_obj_t *ui_bt_status_disconn;
-    lv_obj_t *ui_ik_logo;
+    lv_obj_t *ui_usb_status_fail;
     lv_obj_t *ui_wi_fi_status_conn;
     lv_obj_t *ui_bt_status_conn;
     lv_obj_t *ui_usb_status_ok;
+    lv_obj_t *ui_project_heading_label_1;
+    lv_obj_t *ui_project_heading_label_2;
+    lv_obj_t *ui_project_heading_label_3;
+    lv_obj_t *ui_project_heading_label_4;
+    lv_obj_t *ui_project_heading_label_5;
     lv_obj_t *ui_preset_heading_label;
-    lv_obj_t *ui_skins;
-    lv_obj_t *ui_skin_image;
-    lv_obj_t *ui_bank_title_label;
-    lv_obj_t *ui_bank_value_label;
+    lv_obj_t *bpm_container;
+    lv_obj_t *ui_bpm_indicator;
     lv_obj_t *ui_bpm_title_label;
     lv_obj_t *ui_bpm_value_label;
-    lv_obj_t *ui_bpm_indicator;
-    lv_obj_t *ui_preset_details_text_area;
     lv_obj_t *ui_bottom_panel_tonex;
-    lv_obj_t *ui_settings_image;
     lv_obj_t *ui_icon_reverb;
     lv_obj_t *ui_icon_delay;
     lv_obj_t *ui_icon_mod;
@@ -52,12 +70,10 @@ typedef struct _objects_t {
     lv_obj_t *ui_icon_val_dly;
     lv_obj_t *ui_icon_val_dst;
     lv_obj_t *ui_val_settings;
-    lv_obj_t *ui_left_arrow;
-    lv_obj_t *ui_right_arrow;
-    lv_obj_t *ui_entry_keyboard;
-    lv_obj_t *ui_ok_tick;
+    lv_obj_t *obj1;
+    lv_obj_t *ui_project_heading_label_6;
     lv_obj_t *ui_settings_tab_view;
-    lv_obj_t *obj0;
+    lv_obj_t *obj2;
     lv_obj_t *ui_gate_tab;
     lv_obj_t *ui_noise_gate_enable_label;
     lv_obj_t *ui_noise_gate_switch;
@@ -91,7 +107,6 @@ typedef struct _objects_t {
     lv_obj_t *ui_amp_enable_switch;
     lv_obj_t *ui_amp_cab_label;
     lv_obj_t *ui_cabinet_model_dropdown;
-    lv_obj_t *obj1;
     lv_obj_t *ui_amplifier_gain_label;
     lv_obj_t *ui_amplifier_gain_slider;
     lv_obj_t *ui_amplifier_gain_value;
@@ -126,12 +141,10 @@ typedef struct _objects_t {
     lv_obj_t *ui_modulation_post_switch;
     lv_obj_t *ui_modulation_mode_label;
     lv_obj_t *ui_modulation_model_dropdown;
-    lv_obj_t *obj2;
     lv_obj_t *ui_modulation_sync_label;
     lv_obj_t *ui_modulation_sync_switch;
     lv_obj_t *ui_modulation_param1_label;
     lv_obj_t *ui_modulation_ts_dropdown;
-    lv_obj_t *obj3;
     lv_obj_t *ui_modulation_param1_slider;
     lv_obj_t *ui_modulation_param1_value;
     lv_obj_t *ui_modulation_param2_label;
@@ -150,16 +163,14 @@ typedef struct _objects_t {
     lv_obj_t *ui_delay_post_switch;
     lv_obj_t *ui_delay_mode_label;
     lv_obj_t *ui_delay_model_dropdown;
-    lv_obj_t *obj4;
     lv_obj_t *ui_delay_sync_label;
     lv_obj_t *ui_delay_sync_switch;
     lv_obj_t *ui_delay_ping_pong_label;
     lv_obj_t *ui_delay_ping_pong_switch;
+    lv_obj_t *ui_delay_ts_dropdown;
     lv_obj_t *ui_delay_ts_label;
     lv_obj_t *ui_delay_ts_slider;
     lv_obj_t *ui_delay_ts_value;
-    lv_obj_t *ui_delay_ts_dropdown;
-    lv_obj_t *obj5;
     lv_obj_t *ui_delay_feedback_label;
     lv_obj_t *ui_delay_feedback_slider;
     lv_obj_t *ui_delay_feedback_value;
@@ -173,7 +184,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_reverb_post_switch;
     lv_obj_t *ui_reverb_mode_label;
     lv_obj_t *ui_reverb_model_dropdown;
-    lv_obj_t *obj6;
+    lv_obj_t *obj3;
     lv_obj_t *ui_reverb_mix_label;
     lv_obj_t *ui_reverb_mix_slider;
     lv_obj_t *ui_reverb_mix_value;
@@ -191,8 +202,8 @@ typedef struct _objects_t {
     lv_obj_t *ui_cab_bypass_switch;
     lv_obj_t *ui_tempo_sourcet_label;
     lv_obj_t *ui_tempo_source_switch;
-    lv_obj_t *ui_bpm_label;
     lv_obj_t *ui_bpm_slider;
+    lv_obj_t *ui_bpm_label;
     lv_obj_t *ui_bpm_value;
     lv_obj_t *ui_input_trim_label;
     lv_obj_t *ui_input_trim_slider;
@@ -208,12 +219,12 @@ typedef struct _objects_t {
     lv_obj_t *ui_settings_text_entry;
     lv_obj_t *ui_settings_keyboard;
     lv_obj_t *ui_val_settings_tab_view;
-    lv_obj_t *obj7;
+    lv_obj_t *obj4;
     lv_obj_t *ui_val_nr_tab;
     lv_obj_t *ui_val_nr_block_label;
     lv_obj_t *ui_val_nr_block_switch;
     lv_obj_t *ui_val_nr_model_dropdown;
-    lv_obj_t *obj8;
+    lv_obj_t *obj5;
     lv_obj_t *ui_val_nr_param0_label;
     lv_obj_t *ui_val_nr_param0_slider;
     lv_obj_t *ui_val_nr_param0_value;
@@ -233,7 +244,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_npre_block_label;
     lv_obj_t *ui_val_pre_block_switch;
     lv_obj_t *ui_val_pre_model_dropdown;
-    lv_obj_t *obj9;
+    lv_obj_t *obj6;
     lv_obj_t *ui_val_pre_param0_label;
     lv_obj_t *ui_val_pre_param0_slider;
     lv_obj_t *ui_val_pre_param0_value;
@@ -253,7 +264,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_dst_block_label;
     lv_obj_t *ui_val_dst_block_switch;
     lv_obj_t *ui_val_dst_model_dropdown;
-    lv_obj_t *obj10;
+    lv_obj_t *obj7;
     lv_obj_t *ui_val_dst_param0_label;
     lv_obj_t *ui_val_dst_param0_slider;
     lv_obj_t *ui_val_dst_param0_value;
@@ -273,7 +284,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_amp_block_label;
     lv_obj_t *ui_val_amp_block_switch;
     lv_obj_t *ui_val_amp_model_dropdown;
-    lv_obj_t *obj11;
+    lv_obj_t *obj8;
     lv_obj_t *ui_val_amp_param0_label;
     lv_obj_t *ui_val_amp_param0_slider;
     lv_obj_t *ui_val_amp_param0_value;
@@ -293,7 +304,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_cab_block_label;
     lv_obj_t *ui_val_cab_block_switch;
     lv_obj_t *ui_val_cab_model_dropdown;
-    lv_obj_t *obj12;
+    lv_obj_t *obj9;
     lv_obj_t *ui_val_cab_param0_label;
     lv_obj_t *ui_val_cab_param0_slider;
     lv_obj_t *ui_val_cab_param0_value;
@@ -313,7 +324,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_eq_block_label;
     lv_obj_t *ui_val_eq_block_switch;
     lv_obj_t *ui_val_eq_model_dropdown;
-    lv_obj_t *obj13;
+    lv_obj_t *obj10;
     lv_obj_t *ui_val_eq_param0_label;
     lv_obj_t *ui_val_eq_param0_slider;
     lv_obj_t *ui_val_eq_param0_value;
@@ -333,7 +344,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_mod_block_label;
     lv_obj_t *ui_val_mod_block_switch;
     lv_obj_t *ui_val_mod_model_dropdown;
-    lv_obj_t *obj14;
+    lv_obj_t *obj11;
     lv_obj_t *ui_val_mod_param0_label;
     lv_obj_t *ui_val_mod_param0_slider;
     lv_obj_t *ui_val_mod_param0_value;
@@ -353,7 +364,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_dly_block_label;
     lv_obj_t *ui_val_dly_block_switch;
     lv_obj_t *ui_val_dly_model_dropdown;
-    lv_obj_t *obj15;
+    lv_obj_t *obj12;
     lv_obj_t *ui_val_dly_param0_label;
     lv_obj_t *ui_val_dly_param0_slider;
     lv_obj_t *ui_val_dly_param0_value;
@@ -373,7 +384,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_rvb_block_label;
     lv_obj_t *ui_val_rvb_block_switch;
     lv_obj_t *ui_val_rvb_model_dropdown;
-    lv_obj_t *obj16;
+    lv_obj_t *obj13;
     lv_obj_t *ui_val_rvb_param0_label;
     lv_obj_t *ui_val_rvb_param0_slider;
     lv_obj_t *ui_val_rvb_param0_value;
@@ -393,7 +404,7 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_ns_block_label;
     lv_obj_t *ui_val_ns_block_switch;
     lv_obj_t *ui_val_ns_model_dropdown;
-    lv_obj_t *obj17;
+    lv_obj_t *obj14;
     lv_obj_t *ui_val_ns_param0_label;
     lv_obj_t *ui_val_ns_param0_slider;
     lv_obj_t *ui_val_ns_param0_value;
@@ -425,15 +436,32 @@ typedef struct _objects_t {
     lv_obj_t *ui_val_settings_dialog;
     lv_obj_t *ui_val_settings_text_entry;
     lv_obj_t *ui_val_settings_keyboard;
+
+    /* ===== COMPAT STUBS =====
+       Widgets used by display.c / display_tonex.c but not produced by the
+       current EEZ design. screens_compat_init() (screens_compat.c) creates
+       hidden 0x0 placeholders for these at startup so the runtime code can
+       safely call LVGL APIs on real objects instead of NULL.
+       Hand-maintained â€” EEZ regen wipes this block; re-add after regenerating.
+       Run tools/restore_compat_stubs.ps1 to re-insert automatically. */
+    lv_obj_t *ui_skin_image;
+    lv_obj_t *ui_preset_details_text_area;
+    lv_obj_t *ui_entry_keyboard;
+    lv_obj_t *ui_left_arrow;
+    lv_obj_t *ui_right_arrow;
+    lv_obj_t *ui_ok_tick;
+    lv_obj_t *ui_chip_gate;
+    lv_obj_t *ui_chip_comp;
+    lv_obj_t *ui_chip_eq;
+    lv_obj_t *ui_chip_amp;
+    lv_obj_t *ui_chip_cab;
+    lv_obj_t *ui_chip_mod;
+    lv_obj_t *ui_chip_delay;
+    lv_obj_t *ui_chip_reverb;
+    /* ===== END COMPAT STUBS ===== */
 } objects_t;
 
 extern objects_t objects;
-
-enum ScreensEnum {
-    SCREEN_ID_SCREEN1 = 1,
-    SCREEN_ID_SETTINGS = 2,
-    SCREEN_ID_VAL_SETTINGS = 3,
-};
 
 void create_screen_screen1();
 void tick_screen_screen1();
@@ -448,7 +476,6 @@ void tick_screen_by_id(enum ScreensEnum screenId);
 void tick_screen(int screen_index);
 
 void create_screens();
-
 
 #ifdef __cplusplus
 }
