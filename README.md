@@ -35,6 +35,10 @@ I have made this Customized UI focused on the "signal chain" and preset control.
 - Added a Next and Previous button to change presets (swiping still works)
 - Removed amplifier-skin / image assets to free up flash space as they are not used.
 
+### Easy Build ###
+Use the Web Browser tool to install the build, follow the instructions there, you have to use Chrome or Microsoft Edge though.
+https://mamoru-miyagawa.github.io/TonexOneController_CustomUI/
+
 **Build tooling:**
 - Since I have removed some elements from the original design without changing the core code of how it works, I have to add the missing widget declarations using a script.
 - [`tools/restore_compat_stubs.ps1`](tools/restore_compat_stubs.ps1) — re-inserts a hand-maintained "COMPAT STUBS" block of widget declarations into the EEZ-regenerated `screens.h`. EEZ Studio rewrites that file on every regen and wipes the declarations that runtime code (`display.c`, `display_tonex.c`) depends on. Run this script after every EEZ regen, before `idf.py build`.
