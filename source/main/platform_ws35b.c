@@ -112,6 +112,7 @@ static lv_color_t* trans_buf_1 = NULL;
 static lv_color_t* trans_buf_2 = NULL;
 static lv_color_t* trans_act = NULL;
 static uint8_t trans_done = 0;
+static SemaphoreHandle_t trans_sem = NULL;
 static lvgl_port_wait_cb draw_wait_cb = NULL;     /* Callback function for drawing */
 static int rotation_setting = LV_DISP_ROT_90;
 
@@ -339,7 +340,10 @@ __attribute__((unused)) lv_dir_t platform_adjust_gesture(lv_dir_t gesture)
 static bool lvgl_port_flush_ready_callback(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
 {
     trans_done = 1;
-
+    BaseType_t high_task_awoken = pdFALSE;
+    if (trans_sem) {
+        xSemaphoreGiveFromISR(trans_sem, &high_task_awoken);
+    }
     return false;
 }
 
@@ -505,10 +509,13 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
         }   
         else 
         {
-            // wait for transfer to complete
-            while (!trans_done)
-            {
-                vTaskDelay(1);
+            // wait for transfer to complete via semaphore (avoid busy polling)
+            if (trans_sem) {
+                if (xSemaphoreTake(trans_sem, pdMS_TO_TICKS(TRANS_DONE_TIMEOUT)) != pdTRUE) {
+                    ESP_LOGW(TAG, "Transfer timeout");
+                }
+            } else {
+                while (!trans_done) { vTaskDelay(1); }
             }
         }
          
@@ -619,15 +626,21 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     }
 
     // use DMA capable ram here, or otherwise SPI driver has to allocate it which can lead to ram exhaustion
-    buf2 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);  
+    buf2 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);
     if (buf2 == NULL)
     {
         ESP_LOGE(TAG, "Failed to allocate buf2");
     }
-    trans_buf_1 = buf2;
 
-    // drawing code can run with dual transfer buffers in ping pong, but 2 buffers takes too much ram
-    trans_buf_2 = trans_buf_1;
+    // allocate a second DMA-capable transfer buffer so the driver can ping-pong
+    lv_color_t* buf3 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);
+    if (buf3 == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to allocate buf3");
+    }
+
+    trans_buf_1 = buf2;
+    trans_buf_2 = buf3;
 
     lv_disp_draw_buf_init(&disp_buf, buf1, NULL, LCD_BUFFER_SIZE);
 
@@ -644,6 +657,12 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         .on_color_trans_done = lvgl_port_flush_ready_callback,
     };
     esp_lcd_panel_io_register_event_callbacks(lcd_io, &cbs, &disp_drv);
+
+    // create a semaphore to wait on transfer completion (used instead of busy-poll)
+    trans_sem = xSemaphoreCreateBinary();
+    if (trans_sem == NULL) {
+        ESP_LOGW(TAG, "Failed to create transfer semaphore");
+    }
 
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(disp_drv);
 
