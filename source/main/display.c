@@ -1609,10 +1609,9 @@ void display_task(void *arg)
             lv_task_handler();
             ui_tick();
 
-            // check for any UI update messages
-            if (xQueueReceive(ui_update_queue, (void*)&ui_update, 0) == pdPASS)
+            // check for any UI update messages and process them all in one pass
+            while (xQueueReceive(ui_update_queue, (void*)&ui_update, 0) == pdPASS)
             {
-                // process it
                 update_ui_element(&ui_update);
             }
 

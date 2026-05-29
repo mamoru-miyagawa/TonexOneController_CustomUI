@@ -38,6 +38,7 @@ limitations under the License.
 #include "lvgl.h"
 #include "demos/lv_demos.h"
 #include "esp_lcd_panel_io.h"
+#include "esp_heap_caps.h"
 #include "esp_lcd_panel_vendor.h"
 #include "esp_lcd_panel_ops.h"
 #include "esp_vfs.h"
@@ -110,9 +111,21 @@ static esp_io_expander_handle_t expander_handle = NULL;
 static uint32_t trans_size = LCD_BUFFER_SIZE / 10;
 static lv_color_t* trans_buf_1 = NULL;
 static lv_color_t* trans_buf_2 = NULL;
+static lv_color_t* trans_buf_3 = NULL;
 static lv_color_t* trans_act = NULL;
 static uint8_t trans_done = 0;
-static SemaphoreHandle_t trans_sem = NULL;
+
+/* transfer buffer management */
+#define TRANS_BUFFER_COUNT 3
+typedef struct {
+    lv_disp_drv_t* drv;
+    int remaining;
+} flush_ctx_t;
+
+static QueueHandle_t free_trans_buf_q = NULL;    // holds lv_color_t* free buffers
+static QueueHandle_t pending_trans_q = NULL;     // holds lv_color_t* buffers currently pending
+static QueueHandle_t pending_ctx_q = NULL;       // holds flush_ctx_t* entries per chunk
+static QueueHandle_t flush_ready_q = NULL;       // holds flush_ctx_t* for task to finish
 static lvgl_port_wait_cb draw_wait_cb = NULL;     /* Callback function for drawing */
 static int rotation_setting = LV_DISP_ROT_90;
 
@@ -152,6 +165,19 @@ static const axs15231b_lcd_init_cmd_t lcd_init_cmds[] = {
 };
 
 static bool lvgl_port_flush_ready_callback(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx);
+
+static void lvgl_flush_ready_task(void* arg)
+{
+    flush_ctx_t* ctx = NULL;
+    for(;;) {
+        if (xQueueReceive(flush_ready_q, &ctx, portMAX_DELAY) == pdTRUE) {
+            if (ctx && ctx->drv) {
+                lv_disp_flush_ready(ctx->drv);
+            }
+            if (ctx) heap_caps_free(ctx);
+        }
+    }
+}
 
 /****************************************************************************
 * NAME:        
@@ -339,11 +365,39 @@ __attribute__((unused)) lv_dir_t platform_adjust_gesture(lv_dir_t gesture)
 *****************************************************************************/
 static bool lvgl_port_flush_ready_callback(esp_lcd_panel_io_handle_t panel_io, esp_lcd_panel_io_event_data_t *edata, void *user_ctx)
 {
-    trans_done = 1;
     BaseType_t high_task_awoken = pdFALSE;
-    if (trans_sem) {
-        xSemaphoreGiveFromISR(trans_sem, &high_task_awoken);
+
+    // retrieve the pending buffer and driver for this completed transfer (FIFO)
+    lv_color_t* buf = NULL;
+    flush_ctx_t* ctx = NULL;
+
+    if (pending_trans_q) {
+        xQueueReceiveFromISR(pending_trans_q, &buf, &high_task_awoken);
     }
+    if (pending_ctx_q) {
+        xQueueReceiveFromISR(pending_ctx_q, &ctx, &high_task_awoken);
+    }
+
+    // return the buffer to the free pool
+    if (buf && free_trans_buf_q) {
+        xQueueSendFromISR(free_trans_buf_q, &buf, &high_task_awoken);
+    }
+
+    // decrement the flush context remaining counter and, if this was the last chunk,
+    // queue the context for LVGL completion handling in task context
+    if (ctx) {
+        ctx->remaining--;
+        if (ctx->remaining <= 0) {
+            if (flush_ready_q) {
+                xQueueSendFromISR(flush_ready_q, &ctx, &high_task_awoken);
+            }
+        }
+    }
+
+    if (high_task_awoken == pdTRUE) {
+        portYIELD_FROM_ISR();
+    }
+
     return false;
 }
 
@@ -404,6 +458,16 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
         y_end_tmp = y_end;
     }
 
+    // create flush context to track when all chunk transfers for this LVGL flush complete
+    flush_ctx_t* flush_ctx = NULL;
+    if (trans_count > 0) {
+        flush_ctx = (flush_ctx_t*)heap_caps_calloc(1, sizeof(flush_ctx_t), MALLOC_CAP_INTERNAL);
+        if (flush_ctx) {
+            flush_ctx->drv = drv;
+            flush_ctx->remaining = trans_count;
+        }
+    }
+
     for (int i = 0; i < trans_count; i++) 
     {
         if (LV_DISP_ROT_90 == rotation_setting) 
@@ -427,8 +491,19 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
             y_start_tmp = (y_end_tmp - y_start + 1) > max_height ? (y_end_tmp - max_height + 1) : y_start;
         }
      
-        trans_act = (trans_act == trans_buf_1) ? (trans_buf_2) : (trans_buf_1);
-        to = trans_act;
+        // get a free transfer buffer from the pool (blocking short time)
+        lv_color_t* to = NULL;
+        if (free_trans_buf_q) {
+            if (xQueueReceive(free_trans_buf_q, &to, pdMS_TO_TICKS(TRANS_DONE_TIMEOUT)) != pdTRUE) {
+                to = NULL;
+            }
+        }
+
+        if (to == NULL) {
+            // fallback: use existing ping-pong buffers and block until transfer completes
+            trans_act = (trans_act == trans_buf_1) ? (trans_buf_2) : (trans_buf_1);
+            to = trans_act;
+        }
         
         switch (rotation_setting) 
         {
@@ -500,23 +575,22 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
             }            
         }
 
-        // do the transfer
-        trans_done = 0;
+        // start the transfer (async)
         esp_err_t res = esp_lcd_panel_draw_bitmap(panel_handle, x_draw_start, y_draw_start, x_draw_end + 1, y_draw_end + 1, to); 
         if (res != ESP_OK) 
         {
             ESP_LOGE(TAG, "Failed to draw bitmap %d", res);
+            // return buffer to pool if we borrowed one
+            if (free_trans_buf_q && (to == trans_buf_1 || to == trans_buf_2 || to == trans_buf_3)) {
+                xQueueSend(free_trans_buf_q, &to, 0);
+            }
         }   
         else 
         {
-            // wait for transfer to complete via semaphore (avoid busy polling)
-            if (trans_sem) {
-                if (xSemaphoreTake(trans_sem, pdMS_TO_TICKS(TRANS_DONE_TIMEOUT)) != pdTRUE) {
-                    ESP_LOGW(TAG, "Transfer timeout");
-                }
-            } else {
-                while (!trans_done) { vTaskDelay(1); }
-            }
+            // record the buffer and associated flush context so ISR can complete the right flush
+            if (pending_trans_q) xQueueSend(pending_trans_q, &to, 0);
+            if (pending_ctx_q && flush_ctx) xQueueSend(pending_ctx_q, &flush_ctx, 0);
+            // do not call lv_disp_flush_ready here; flush_ready_task will call it when flush_ctx->remaining reaches 0
         }
          
         if (LV_DISP_ROT_90 == rotation_setting) 
@@ -537,7 +611,7 @@ static void lvgl_port_flush_callback(lv_disp_drv_t *drv, const lv_area_t *area, 
         } 
     }
 
-    lv_disp_flush_ready(drv);
+    // completion of this LVGL flush will be handled asynchronously by lvgl_flush_ready_task
 }
 
 /****************************************************************************
@@ -625,22 +699,42 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
         ESP_LOGE(TAG, "Failed to allocate buf1");
     }
 
-    // use DMA capable ram here, or otherwise SPI driver has to allocate it which can lead to ram exhaustion
+    // use DMA capable ram here for a small pool of transfer buffers
     buf2 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);
     if (buf2 == NULL)
     {
         ESP_LOGE(TAG, "Failed to allocate buf2");
     }
 
-    // allocate a second DMA-capable transfer buffer so the driver can ping-pong
-    lv_color_t* buf3 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);
+    buf3 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);
     if (buf3 == NULL)
     {
         ESP_LOGE(TAG, "Failed to allocate buf3");
     }
 
+    lv_color_t* buf4 = heap_caps_aligned_alloc(32, trans_size * sizeof(lv_color_t), MALLOC_CAP_DMA | MALLOC_CAP_INTERNAL);
+    if (buf4 == NULL)
+    {
+        ESP_LOGE(TAG, "Failed to allocate buf4");
+    }
+
     trans_buf_1 = buf2;
     trans_buf_2 = buf3;
+    trans_buf_3 = buf4;
+
+    // create queues for buffer management
+    free_trans_buf_q = xQueueCreate(TRANS_BUFFER_COUNT, sizeof(lv_color_t*));
+    pending_trans_q = xQueueCreate(TRANS_BUFFER_COUNT, sizeof(lv_color_t*));
+    pending_ctx_q = xQueueCreate(TRANS_BUFFER_COUNT, sizeof(flush_ctx_t*));
+    flush_ready_q = xQueueCreate(16, sizeof(flush_ctx_t*));
+    if (!free_trans_buf_q || !pending_trans_q || !pending_ctx_q || !flush_ready_q) {
+        ESP_LOGW(TAG, "Failed to create transfer queues");
+    } else {
+        // populate free buffer queue
+        xQueueSend(free_trans_buf_q, &trans_buf_1, 0);
+        xQueueSend(free_trans_buf_q, &trans_buf_2, 0);
+        xQueueSend(free_trans_buf_q, &trans_buf_3, 0);
+    }
 
     lv_disp_draw_buf_init(&disp_buf, buf1, NULL, LCD_BUFFER_SIZE);
 
@@ -651,17 +745,16 @@ void platform_init(i2c_master_bus_handle_t bus_handle, SemaphoreHandle_t I2CMute
     disp_drv->flush_cb = lvgl_port_flush_callback;
     disp_drv->draw_buf = &disp_buf;
     disp_drv->user_data = lcd_panel;
-    disp_drv->full_refresh = 1;
+    disp_drv->full_refresh = false; // only redraw changed regions for faster preset updates
 
     const esp_lcd_panel_io_callbacks_t cbs = {
         .on_color_trans_done = lvgl_port_flush_ready_callback,
     };
     esp_lcd_panel_io_register_event_callbacks(lcd_io, &cbs, &disp_drv);
 
-    // create a semaphore to wait on transfer completion (used instead of busy-poll)
-    trans_sem = xSemaphoreCreateBinary();
-    if (trans_sem == NULL) {
-        ESP_LOGW(TAG, "Failed to create transfer semaphore");
+    // create a task to consume flush-ready events and call LVGL from task context
+    if (flush_ready_q) {
+        xTaskCreatePinnedToCore(lvgl_flush_ready_task, "lvgl_flush_ready", 2048, NULL, tskIDLE_PRIORITY+2, NULL, tskNO_AFFINITY);
     }
 
     lv_disp_t* __attribute__((unused)) disp = lv_disp_drv_register(disp_drv);
